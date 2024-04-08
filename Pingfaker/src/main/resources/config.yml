@@ -1,0 +1,9 @@
+###############################
+###       Ping Faker        ###
+###     By: CosmoKotik      ###
+###############################
+
+#Plugins requires to use ProtocolLib in order to function correctly
+
+enabled: true #       enables/disables fake ping
+realistic: true #     if enabled ping will be affected by real ping, if disabled ping will always be low
