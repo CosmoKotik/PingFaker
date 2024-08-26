@@ -2,3 +2,5 @@ name: Pingfaker
 version: '${project.version}'
 main: org.kottapps.pingfaker.Pingfaker
 api-version: '1.20'
+depend:
+  - TAB

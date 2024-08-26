@@ -7,6 +7,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.event.player.PlayerLoadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,11 +41,25 @@ public final class Pingfaker extends JavaPlugin implements Listener {
         _playerFakeLatencyScheduler = new HashMap<UUID, BukkitScheduler>();
         _playerFakeLatency = new HashMap<UUID, Integer>();
 
-        for (Player player : getServer().getOnlinePlayers()) {
+        /*for (Player player : getServer().getOnlinePlayers()) {
             AddPlayer(player);
-        }
+        }*/
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        TabInitiated();
+    }
+
+    private void TabInitiated()
+    {
+        TabAPI.getInstance().getPlaceholderManager().registerPlayerPlaceholder("%ping%", 22500, x -> _playerFakeLatency.get(x.getName()));
+
+        TabAPI.getInstance().getEventBus().register(PlayerLoadEvent.class, playerLoadEvent -> {
+            TabPlayer tabPlayer = playerLoadEvent.getPlayer();
+
+            Player player = getServer().getPlayer(tabPlayer.getName());
+            AddPlayer(player);
+        });
     }
 
     @Override
@@ -68,8 +85,6 @@ public final class Pingfaker extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent e)
     {
         Player player = e.getPlayer();
-
-        AddPlayer(player);
     }
 
     public void AddPlayer(Player player)
@@ -110,10 +125,6 @@ public final class Pingfaker extends JavaPlugin implements Listener {
         }
         else
             latency = new Random().nextInt(10, 40);
-
-        
-
-        System.out.println(p.getName() + " ping: " + latency);
 
         _playerFakeLatency.put(p.getUniqueId(), latency);
 
